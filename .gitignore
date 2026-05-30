@@ -1,0 +1,99 @@
+# ==========================
+# Python
+# ==========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual Environment
+.venv/
+venv/
+env/
+ENV/
+
+# ==========================
+# Environment Variables
+# ==========================
+.env
+.env.local
+.env.production
+
+# ==========================
+# IDE
+# ==========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ==========================
+# OS Files
+# ==========================
+.DS_Store
+Thumbs.db
+
+# ==========================
+# Logs
+# ==========================
+logs/
+*.log
+
+# ==========================
+# Testing
+# ==========================
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ==========================
+# Build
+# ==========================
+build/
+dist/
+*.egg-info/
+
+# ==========================
+# ChromaDB
+# ==========================
+data/vectordb/
+chroma/
+chroma_db/
+
+# ==========================
+# Uploaded PDFs
+# ==========================
+data/raw/
+data/processed/
+
+# ==========================
+# Model Cache
+# ==========================
+.cache/
+huggingface/
+hf_cache/
+
+# Hugging Face Cache
+.huggingface/
+.cache/huggingface/
+
+# ==========================
+# Jupyter
+# ==========================
+.ipynb_checkpoints/
+
+# ==========================
+# SQLite
+# ==========================
+*.sqlite
+*.sqlite3
+
+# ==========================
+# LangChain
+# ==========================
+.langchain/
+
+# ==========================
+# Ollama Generated Files
+# ==========================
+ollama_logs/
