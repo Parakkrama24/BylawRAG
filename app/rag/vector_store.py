@@ -32,7 +32,9 @@ def similarity_search(query: str, k: int = 5):
 
     vector_store = load_vector_store()
 
-    return vector_store.similarity_search(
+    results = vector_store.similarity_search_with_score(
         query,
         k=k
     )
+
+    return results
