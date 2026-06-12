@@ -38,3 +38,11 @@ def similarity_search(query: str, k: int = 5):
     )
 
     return results
+
+def get_all_documents():
+
+    vector_store = load_vector_store()
+
+    data = vector_store.get()
+
+    return data

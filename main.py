@@ -11,6 +11,7 @@ from app.rag.vector_store import (
 )
 from pydantic import BaseModel
 from app.rag.rag_service import ask_question
+from fastapi.responses import StreamingResponse
 
 
 class ChatRequest(BaseModel):
@@ -79,3 +80,4 @@ def chat(request: ChatRequest):
     )
 
     return response
+

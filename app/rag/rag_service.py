@@ -1,42 +1,46 @@
-from app.rag.vector_store import similarity_search
+from app.rag.retrieval import hybrid_search
 from app.rag.llm import llm
 from app.rag.prompts import RAG_PROMPT
+from app.rag.cache import (
+    get_cached_answer,
+    cache_answer
+)
+
 
 
 def ask_question(question: str):
-    results = similarity_search(question)
+    cached = get_cached_answer(question)
 
-    results = similarity_search(question)
+    if cached:
+        print("CACHE HIT")
+        return cached
 
-    if not results:
+    docs = hybrid_search(question)
+
+    if not docs:
         return {
             "answer": "I could not find this information in the university regulations.",
             "sources": []
         }
 
-    best_score = results[0][1]
+    # Debug
+    print("\n===== Retrieved Documents =====")
 
-    print(f"Best Score: {best_score}")
-
-    if best_score > 1.2:
-        return {
-            "answer": "I could not find this information in the university regulations.",
-            "sources": []
-        }
-    # Debug retrieval results
-    for doc, score in results:
-        print(f"Score: {score}")
+    for doc in docs:
         print(doc.metadata)
 
+    print("==============================\n")
+
+    # Build Context
     context = "\n\n".join(
         [
             f"""
-            Document: {doc.metadata.get('document')}
-            Page: {doc.metadata.get('page')}
+Document: {doc.metadata.get('document')}
+Page: {doc.metadata.get('page')}
 
-            {doc.page_content}
-            """
-            for doc, score in results
+{doc.page_content}
+"""
+            for doc in docs
         ]
     )
 
@@ -49,15 +53,26 @@ def ask_question(question: str):
 
     sources = []
 
-    for doc, score in results:
+    for doc in docs:
         sources.append({
             "document": doc.metadata.get("document"),
             "page": doc.metadata.get("page"),
-            "score": round(score, 3),
             "snippet": doc.page_content[:200]
         })
 
-    return {
+    response = {
         "answer": answer,
         "sources": sources
     }
+
+    cache_answer(
+        question,
+        response
+    )
+
+    return response
+
+def stream_answer(prompt):
+
+    for chunk in llm.stream(prompt):
+        yield chunk

@@ -11,3 +11,4 @@ pymupdf
 ollama
 python-dotenv
 python-multipart
+rank-bm25
