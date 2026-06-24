@@ -18,6 +18,7 @@ from fastapi.responses import StreamingResponse
 
 
 class ChatRequest(BaseModel):
+    session_id: str
     question: str
 
 app = FastAPI()
@@ -79,6 +80,7 @@ def search(request: SearchRequest):
 def chat(request: ChatRequest):
 
     response = ask_question(
+        request.session_id,
         request.question
     )
 
