@@ -5,7 +5,7 @@ import shutil
 from app.database.models import SessionLocal
 from app.database.models.chat_message import ChatMessage
 from app.database.models.init_db import create_tables
-from app.services.chat_session_service import create_session, get_sessions
+from app.services.chat_session_service import create_session, get_sessions, get_session_messages, delete_session
 from app.utils.pdf_loader import extract_pdf_pages
 from app.rag.ingestion.document_processor import create_documents
 from app.rag.retrival.vector_store import (
@@ -142,3 +142,18 @@ def new_session():
 def list_sessions():
 
     return get_sessions()
+
+
+@app.get("/sessions/{session_id}/messages")
+def session_messages(session_id: str):
+
+    return get_session_messages(
+        session_id
+    )
+
+@app.delete("/sessions/{session_id}")
+def remove_session(session_id: str):
+
+    return delete_session(
+        session_id
+    )
