@@ -1,6 +1,6 @@
-from app.rag.vector_store import similarity_search
-from app.rag.bm25_retriever import bm25_search
-from app.rag.reranker import rerank
+from app.rag.retrival.vector_store import similarity_search
+from app.rag.retrival.bm25_retriever import bm25_search
+from app.rag.retrival.reranker import rerank
 
 
 def hybrid_search(question):

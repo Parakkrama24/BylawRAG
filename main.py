@@ -1,20 +1,24 @@
 from fastapi import FastAPI, UploadFile, File
-from pydantic import BaseModel
 import os
 import shutil
 
+from app.database.models import SessionLocal
+from app.database.models.chat_message import ChatMessage
+from app.database.models.init_db import create_tables
 from app.utils.pdf_loader import extract_pdf_pages
-from app.rag.document_processor import create_documents
-from app.rag.vector_store import (
+from app.rag.ingestion.document_processor import create_documents
+from app.rag.retrival.vector_store import (
     create_vector_store,
     similarity_search
 )
 from pydantic import BaseModel
-from app.rag.rag_service import ask_question
-from app.rag.rag_service import stream_answer
-from app.rag.retrieval import hybrid_search
-from app.rag.prompts import RAG_PROMPT
+from app.services.rag_service import ask_question
+from app.services.rag_service import stream_answer
+from app.rag.retrival.retrieval import hybrid_search
+from app.rag.llm.prompts import RAG_PROMPT
 from fastapi.responses import StreamingResponse
+from app.rag.llm.prompt_builder import build_prompt
+
 
 
 class ChatRequest(BaseModel):
@@ -22,6 +26,8 @@ class ChatRequest(BaseModel):
     question: str
 
 app = FastAPI()
+
+create_tables()
 
 UPLOAD_DIR = "data/raw"
 
@@ -93,13 +99,11 @@ def chat_stream(request: ChatRequest):
         request.question
     )
 
-    context = "\n\n".join(
-        [doc.page_content for doc in docs]
-    )
-
-    prompt = RAG_PROMPT.format(
-        context=context,
-        question=request.question
+    prompt = build_prompt(
+        session_id=request.session_id,
+        question=request.question,
+        docs=docs,
+        prompt_template=RAG_PROMPT
     )
 
     return StreamingResponse(
@@ -107,3 +111,19 @@ def chat_stream(request: ChatRequest):
         media_type="text/plain"
     )
 
+@app.get("/chat-history/{session_id}")
+def get_history(session_id):
+
+    db = SessionLocal()
+
+    messages = (
+        db.query(ChatMessage)
+        .filter(
+            ChatMessage.session_id == session_id
+        )
+        .all()
+    )
+
+    db.close()
+
+    return messages

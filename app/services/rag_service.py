@@ -1,14 +1,14 @@
 from app.log.retrieval_logger import log_question
-from app.rag.retrieval import hybrid_search
-from app.rag.llm import llm
-from app.rag.prompts import RAG_PROMPT
+from app.rag.retrival.retrieval import hybrid_search
+from app.rag.llm.llm import llm
+from app.rag.llm.prompts import RAG_PROMPT
 
-from app.rag.cache import (
+from app.rag.memory.cache import (
     get_cached_answer,
     cache_answer
 )
 
-from app.rag.chat_memory import (
+from app.rag.memory.chat_memory import (
     get_chat_history,
     add_message
 )
@@ -17,7 +17,7 @@ from app.rag.chat_memory import (
 def ask_question(session_id: str, question: str):
 
     # Cache Check
-    cached = get_cached_answer(question)
+    cached = get_cached_answer(session_id,question)
 
     if cached:
         print("CACHE HIT")
@@ -103,6 +103,7 @@ Page: {doc.metadata.get('page')}
 
     # Cache
     cache_answer(
+        session_id,
         question,
         response
     )
