@@ -12,6 +12,7 @@ from app.rag.memory.chat_memory import (
     get_chat_history,
     add_message
 )
+from app.services.chat_session_service import update_session_title
 
 
 def ask_question(session_id: str, question: str):
@@ -68,6 +69,11 @@ Page: {doc.metadata.get('page')}
         history=history_text,
         context=context,
         question=question
+    )
+
+    update_session_title(
+        session_id,
+        question
     )
 
     # Generate Answer
