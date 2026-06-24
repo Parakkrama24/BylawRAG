@@ -1,3 +1,4 @@
+from app.log.retrieval_logger import log_question
 from app.rag.retrieval import hybrid_search
 from app.rag.llm import llm
 from app.rag.prompts import RAG_PROMPT
@@ -68,6 +69,11 @@ Page: {doc.metadata.get('page')}
     cache_answer(
         question,
         response
+    )
+
+    log_question(
+        question,
+        sources
     )
 
     return response

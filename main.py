@@ -11,6 +11,9 @@ from app.rag.vector_store import (
 )
 from pydantic import BaseModel
 from app.rag.rag_service import ask_question
+from app.rag.rag_service import stream_answer
+from app.rag.retrieval import hybrid_search
+from app.rag.prompts import RAG_PROMPT
 from fastapi.responses import StreamingResponse
 
 
@@ -80,4 +83,25 @@ def chat(request: ChatRequest):
     )
 
     return response
+
+@app.post("/chat-stream")
+def chat_stream(request: ChatRequest):
+
+    docs = hybrid_search(
+        request.question
+    )
+
+    context = "\n\n".join(
+        [doc.page_content for doc in docs]
+    )
+
+    prompt = RAG_PROMPT.format(
+        context=context,
+        question=request.question
+    )
+
+    return StreamingResponse(
+        stream_answer(prompt),
+        media_type="text/plain"
+    )
 
